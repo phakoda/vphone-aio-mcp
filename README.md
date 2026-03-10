@@ -5,7 +5,7 @@ Do this step by step:
 
 1. Install prerequisites:
    ```bash
-   brew install git-lfs wget zstd libimobiledevice
+   brew install git-lfs wget zstd
    ```
 2. Disable SIP, set `amfi_get_out_of_my_way=1`
 3. Download or clone this repo (it might take a while, for me 12GB takes me 20 minutes to finish)
@@ -16,12 +16,57 @@ Do this step by step:
        "https://github.com/34306/vphone-aio/raw/refs/heads/main/vphone-cli.tar.zst.part_${p}?download="
    done
    ```
-5. Run the `vphone-aio.sh` script
-6. Make sure your device has more than 128GB free (recommended)
-7. Wait until it merges. When done, it will extract the whole folder (about 15 minutes)
-8. You can remove `.git` and the split files once the merge is done
-9. Connect VNC (using RealVNC or Screen Sharing): `vnc://127.0.0.1:5901`
-10. Enjoy!
+5. Pre-download/extract only if you want to stage the payload first:
+   ```bash
+   ./vphone-aio.sh --prepare
+   ```
+6. Run the full launcher when SIP is disabled and `amfi_get_out_of_my_way=1` is set:
+   ```bash
+   ./vphone-aio.sh
+   ```
+7. Wait until extraction finishes (about 15 minutes)
+8. The launcher now extracts directly from the split files, so it does not create an extra merged `vphone-cli.tar.zst` on disk
+9. The built-in Virtualization VNC server will print its URL/password and open automatically
+10. You can remove `.git` once the extraction is done
+11. Enjoy!
+
+## MCP Server
+
+An MCP server is included under [`vphone-cli`](./vphone-cli) so an AI client can boot the VM, capture screenshots, and inject touch gestures over MCP stdio.
+
+Build, sign, and run it from the package directory:
+
+```bash
+cd vphone-cli
+chmod +x mcp.sh
+./mcp.sh
+```
+
+The server exposes these tools:
+
+- `vphone_status`
+- `vphone_start`
+- `vphone_stop`
+- `vphone_screenshot`
+- `vphone_tap`
+- `vphone_swipe`
+
+Coordinates for `vphone_tap` and `vphone_swipe` are normalized: `(0,0)` is the top-left corner of the phone display and `(1,1)` is the bottom-right corner.
+
+Example MCP client config:
+
+```json
+{
+  "mcpServers": {
+    "vphone": {
+      "command": "/absolute/path/to/vphone-aio/vphone-cli/mcp.sh",
+      "cwd": "/absolute/path/to/vphone-aio/vphone-cli"
+    }
+  }
+}
+```
+
+`vphone_start` auto-discovers a local `VM/` directory when the server is launched from `vphone-cli`. This repo does not include `vphone-cli/VM` or guest state; provide your own VM assets locally, or pass `vm_dir` or explicit asset paths.
 
 ## SHA-256 Checksums
 
