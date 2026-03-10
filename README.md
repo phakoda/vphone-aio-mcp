@@ -285,5 +285,6 @@ shasum -a 256 vphone-cli.tar.zst.part_a*
 
 ## Credits
 
+- 34306, aka `@little_34306` on Twitter, for the original `vphone-aio` packaging and release workflow
 - [wh1te4ver (Hyungyu Seo)](https://github.com/wh1te4ever) for the write-up and research notes: [super-tart-vphone-writeup](https://github.com/wh1te4ever/super-tart-vphone-writeup)
 - [Lakr233](https://github.com/Lakr233) for the original [`vphone-cli`](https://github.com/Lakr233/vphone-cli)
